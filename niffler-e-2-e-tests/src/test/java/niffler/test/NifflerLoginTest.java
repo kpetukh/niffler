@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Selenide.$;
 import static niffler.jupiter.User.UserType.ADMIN;
+import static niffler.jupiter.User.UserType.COMMON;
 
 @ExtendWith({ScreenshotExtension.class, UsersExtension.class})
 public class NifflerLoginTest {
@@ -64,8 +65,11 @@ public class NifflerLoginTest {
 
     @AllureId("4")
     @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin2(@User UserModel user) {
-        System.out.println("#### Test 4 " + user.toString());
+    void mainPageShouldBeDisplayedAfterSuccessLogin2(@User(userType = ADMIN) UserModel userFirst,
+                                                     @User(userType = COMMON) UserModel userSecond) {
+        System.out.println("#### Test 4 " + userFirst.toString());
+        System.out.println("#### Test 4 " + userSecond.toString());
+
         Allure.step("Check login", () -> {
             Selenide.open("http://127.0.0.1:3000/");
             $("a[href*='redirect']").click();
