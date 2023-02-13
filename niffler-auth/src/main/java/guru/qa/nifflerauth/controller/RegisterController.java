@@ -42,7 +42,7 @@ public class RegisterController {
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
         model.addAttribute(MODEL_REG_FORM_ATTR, new RegistrationModel());
-        model.addAttribute(MODEL_FRONT_URI_ATTR, nifflerFrontUri);
+        model.addAttribute(MODEL_FRONT_URI_ATTR, nifflerFrontUri + "/redirect");
         return REGISTRATION_VIEW_NAME;
     }
 
@@ -65,7 +65,7 @@ public class RegisterController {
                 );
             }
         }
-        model.addAttribute(MODEL_FRONT_URI_ATTR, nifflerFrontUri);
+        model.addAttribute(MODEL_FRONT_URI_ATTR,nifflerFrontUri +  "/redirect");
         return REGISTRATION_VIEW_NAME;
     }
 
