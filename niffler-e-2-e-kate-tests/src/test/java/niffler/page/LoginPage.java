@@ -1,4 +1,6 @@
-package niffler.pages;
+package niffler.page;
+
+import config.App;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -7,11 +9,11 @@ import static com.codeborne.selenide.Condition.visible;
 
 public class LoginPage {
 
-    public static void login() {
-        open("http://127.0.0.1:3000/");
+    public void login(String username, String password) {
+        open(App.FRONTEND_URL);
         $("a[href*='redirect']").click();
-        $("input[name='username']").setValue("Kate");
-        $("input[name='password']").setValue("pass");
+        $("input[name='username']").setValue(username);
+        $("input[name='password']").setValue(password);
         $("button[type='submit']").click();
         $(".header__title").shouldBe(visible)
                 .shouldHave(text("Niffler. The coin keeper."));
