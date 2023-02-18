@@ -4,16 +4,15 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
-import niffler.jupiter.ScreenshotExtension;
-import niffler.jupiter.User;
-import niffler.jupiter.UsersExtension;
+import niffler.jupiter.extension.ScreenshotExtension;
+import niffler.jupiter.annotation.User;
+import niffler.jupiter.extension.UsersExtension;
 import niffler.model.UserModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static com.codeborne.selenide.Selenide.$;
-import static niffler.jupiter.User.UserType.ADMIN;
-import static niffler.jupiter.User.UserType.COMMON;
+import static niffler.jupiter.annotation.User.UserType.ADMIN;
 
 @ExtendWith({ScreenshotExtension.class, UsersExtension.class})
 public class NifflerLoginTest extends BaseTest {
@@ -66,11 +65,8 @@ public class NifflerLoginTest extends BaseTest {
 
     @AllureId("4")
     @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin2(@User(userType = ADMIN) UserModel userFirst,
-                                                     @User(userType = COMMON) UserModel userSecond) {
-        System.out.println("#### Test 4 " + userFirst.toString());
-        System.out.println("#### Test 4 " + userSecond.toString());
-
+    void mainPageShouldBeDisplayedAfterSuccessLogin2(@User UserModel user) {
+        System.out.println("#### Test 4 " + user.toString());
         Allure.step("Check login", () -> {
             Selenide.open("http://127.0.0.1:3000/");
             $("a[href*='redirect']").click();

@@ -1,11 +1,8 @@
 package niffler.test;
 
 import niffler.api.NifflerSpendClient;
-import niffler.api.NifflerUserdataClient;
-import niffler.jupiter.Spend;
-import niffler.jupiter.UserData;
+import niffler.jupiter.annotation.Spend;
 import niffler.model.SpendJson;
-import niffler.model.UserJson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,17 +19,5 @@ public class SimpleApiTest {
     void addSpend(@Spend SpendJson spend) throws Exception {
         SpendJson created = nsc.createSpend(spend);
         Assertions.assertNotNull(created.getId());
-    }
-
-    private NifflerUserdataClient nifflerUserdataClient = new NifflerUserdataClient();
-
-    @ValueSource(strings = {
-            "data/users/user0.json",
-            "data//users/user1.json"
-    })
-    @ParameterizedTest
-    void updateUserInfo(@UserData UserJson user) throws Exception {
-        UserJson updatedInfo = nifflerUserdataClient.updateUserInfo(user);
-        Assertions.assertNotNull(updatedInfo.getId());
     }
 }

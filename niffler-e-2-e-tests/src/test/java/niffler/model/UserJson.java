@@ -2,6 +2,8 @@ package niffler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserJson {
@@ -16,7 +18,7 @@ public class UserJson {
     @JsonProperty("currency")
     private CurrencyValues currency;
     @JsonProperty("photo")
-    private byte[] photo;
+    private String photo;
 
     public UserJson() {
     }
@@ -61,11 +63,25 @@ public class UserJson {
         this.currency = currency;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserJson userJson = (UserJson) o;
+        return Objects.equals(id, userJson.id) && Objects.equals(userName, userJson.userName) && Objects.equals(firstname, userJson.firstname) && Objects.equals(surname, userJson.surname) && currency == userJson.currency && Objects.equals(photo, userJson.photo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName, firstname, surname, currency, photo);
     }
 }
