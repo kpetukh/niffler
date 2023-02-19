@@ -18,7 +18,8 @@ def junitVersion = "5.9.2",
     ownerVersion = "1.0.12",
     postgresqlVersion = "42.5.3",
     hibernateCoreVersion = "6.1.7.Final",
-    springJdbcVersion = "6.0.4"
+    springJdbcVersion = "6.0.4",
+    springSecurityCryptoVersion = "6.0.1"
 
 dependencies {
     testImplementation(
@@ -30,7 +31,8 @@ dependencies {
             "org.aeonbits.owner:owner:$ownerVersion",
             "org.postgresql:postgresql:$postgresqlVersion",
             "org.hibernate:hibernate-core:$hibernateCoreVersion",
-            "org.springframework:spring-jdbc:$springJdbcVersion"
+            "org.springframework:spring-jdbc:$springJdbcVersion",
+            "org.springframework.security:spring-security-crypto:$springSecurityCryptoVersion"
     )
 }
 

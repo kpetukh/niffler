@@ -3,21 +3,16 @@ package niffler.test;
 import niffler.page.MainPage;
 import niffler.page.LoginPage;
 import niffler.page.ProfilePage;
-import niffler.data.dao.UsersDAO;
-import niffler.data.dao.PostgresSpringJdbcUsersDAO;
 import niffler.data.entity.UsersEntity;
 import niffler.jupiter.UserEntity;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import static com.codeborne.selenide.Condition.text;
 import static niffler.model.Currency.EUR;
+import static com.codeborne.selenide.Condition.text;
 
 public class UserDataTest {
-
-    private UsersDAO usersDAO = new PostgresSpringJdbcUsersDAO();
-
     @UserEntity(username = "dima", currency = EUR)
     UsersEntity dima;
     LoginPage loginPage = new LoginPage();

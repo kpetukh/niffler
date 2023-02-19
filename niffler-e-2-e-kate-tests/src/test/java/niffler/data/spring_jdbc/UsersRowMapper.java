@@ -10,13 +10,13 @@ import java.sql.SQLException;
 public class UsersRowMapper implements RowMapper<UsersEntity> {
     @Override
     public UsersEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        UsersEntity result = new UsersEntity();
-        result.setId(UUID.fromString(rs.getString("id")));
-        result.setUsername(rs.getString("username"));
-        result.setCurrency(rs.getString("currency"));
-        result.setFirstname(rs.getString("firstname"));
-        result.setSurname(rs.getString("surname"));
-        result.setPhoto(rs.getBytes("photo"));
-        return result;
+        UsersEntity usersEntity = new UsersEntity();
+        usersEntity.setId(UUID.fromString(rs.getString("id")));
+        usersEntity.setUsername(rs.getString("username"));
+        usersEntity.setCurrency(rs.getString("currency"));
+        usersEntity.setFirstname(rs.getString("firstname"));
+        usersEntity.setSurname(rs.getString("surname"));
+        usersEntity.setPhoto(rs.getBytes("photo"));
+        return usersEntity;
     }
 }
