@@ -1,27 +1,26 @@
 package niffler.api.context;
 
-import niffler.api.utils.LoginUtils;
+import niffler.utils.LoginUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SessionStorage {
+public class SessionStorageHolder {
 
     private static final String CODE_VERIFIER_KEY = "codeVerifier";
     private static final String CODE_CHALLENGE_KEY = "codeChallenge";
     private static final String CODE_KEY = "code";
     private static final String ID_TOKEN_KEY = "id_token";
 
+    private final Map<String, String> sessionStorage;
 
-    private final Map<String,String> sessionStorage;
+    private static final ThreadLocal<SessionStorageHolder> INSTANCE = ThreadLocal.withInitial(SessionStorageHolder::new);
 
-    private static final ThreadLocal<SessionStorage> INSTANCE = ThreadLocal.withInitial(SessionStorage::new);
-
-    private SessionStorage() {
+    private SessionStorageHolder() {
         sessionStorage = new HashMap<>();
     }
 
-    public static SessionStorage getInstance() {
+    public static SessionStorageHolder getInstance() {
         return INSTANCE.get();
     }
 
@@ -29,7 +28,6 @@ public class SessionStorage {
         final String codeVerifier = LoginUtils.generateCodeVerifier();
         sessionStorage.put(CODE_VERIFIER_KEY, codeVerifier);
         sessionStorage.put(CODE_CHALLENGE_KEY, LoginUtils.generateCodeChallange(codeVerifier));
-
     }
 
     public void addCode(String code) {
@@ -54,5 +52,9 @@ public class SessionStorage {
 
     public String getCodeChallenge() {
         return sessionStorage.get(CODE_CHALLENGE_KEY);
+    }
+
+    public void flushAll() {
+        sessionStorage.clear();
     }
 }
