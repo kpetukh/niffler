@@ -12,7 +12,7 @@ import static niffler.data.DataBase.AUTH;
 import static niffler.data.entity.UserAuthEntity.Authority.READ;
 import static niffler.data.entity.UserAuthEntity.Authority.WRITE;
 
-public class PostgresSpringJdbcUsersRepository implements UsersRepository {
+public class PostgresSpringJdbcUsersAuthRepository implements UsersAuthRepository {
 
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSourceContext.INSTANCE.getDataSource(AUTH));
 

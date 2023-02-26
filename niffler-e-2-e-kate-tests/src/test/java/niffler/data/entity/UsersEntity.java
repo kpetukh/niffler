@@ -1,13 +1,10 @@
 package niffler.data.entity;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
+import java.util.*;
 
 import jakarta.persistence.*;
-
-import java.util.UUID;
 
 @Data
 @Builder
@@ -16,7 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users", schema = "public", catalog = "niffler-userdata")
 public class UsersEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id")
     private UUID id;
@@ -34,4 +31,16 @@ public class UsersEntity {
 
     @Column(name = "photo")
     private byte[] photo;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+    @Builder.Default
+    private Set<UsersEntity> friends = new HashSet<>();
+
+    public void addFriends(UsersEntity... friends) {
+        this.friends.addAll(Arrays.asList(friends));
+    }
 }
