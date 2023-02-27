@@ -1,6 +1,5 @@
 package niffler.test;
 
-
 import niffler.jupiter.User;
 import niffler.page.LoginPage;
 import niffler.model.UserModel;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static niffler.jupiter.User.UserType.ADMIN;
 import static niffler.jupiter.User.UserType.COMMON;
 
-
-@ExtendWith(UserExtension.class)
 public class NifflerUsersTest {
 
     @Test
