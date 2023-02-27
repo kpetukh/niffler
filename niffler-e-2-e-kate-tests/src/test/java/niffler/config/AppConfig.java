@@ -10,6 +10,9 @@ public interface AppConfig extends Config {
     @Key("application.spend.uri")
     String spendUri();
 
+    @Key("application.user.uri")
+    String userUri();
+
     @Key("database.user")
     String dataBaseUser();
 
