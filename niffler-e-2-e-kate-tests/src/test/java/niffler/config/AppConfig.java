@@ -12,22 +12,4 @@ public interface AppConfig extends Config {
 
     @Key("application.user.uri")
     String userUri();
-
-    @Key("database.user")
-    String dataBaseUser();
-
-    @Key("database.password")
-    String dataBasePassword();
-
-    @Key("database.userdata.url")
-    String dataBaseUserdataUrl();
-
-    @Key("database.auth.url")
-    String dataBaseAuthUrl();
-
-    @Key("database.spend.url")
-    String dataBaseSpendUrl();
-
-    @Key("database.currency.url")
-    String dataBaseCurrencyUrl();
 }
