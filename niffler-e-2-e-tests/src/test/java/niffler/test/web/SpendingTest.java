@@ -2,9 +2,10 @@ package niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.AllureId;
-import niffler.jupiter.annotation.ApiLogin;
+import niffler.jupiter.annotation.*;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
+import niffler.model.UserJson;
 import niffler.page.MainPage;
 import niffler.utils.DateUtils;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.ResourceLocks;
+
+import static niffler.jupiter.extension.CreateUserExtension.Selector.NESTED;
+import static niffler.model.CurrencyValues.EUR;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class SpendingTest extends BaseTest {
@@ -46,4 +50,16 @@ public class SpendingTest extends BaseTest {
                 .deleteSpending()
                 .checkTable();
     }
+
+    @Test
+    @AllureId("52")
+    @ApiLogin(nifflerUser = @GenerateUser(categories = {@GenerateCategory("Кафе")},
+            spends = {@GenerateSpend(category = "Кафе", currency = EUR, amount = 3, description = "Матча Латте")}))
+    void checkSpendingIsPresent(@User(selector = NESTED) UserJson user) {
+        SpendJson expectedSpend = user.getSpendsJsons().get(0);
+        Selenide.open(MainPage.URL, MainPage.class)
+                .getSpendingTable()
+                .checkTableContains(expectedSpend);
+    }
+
 }

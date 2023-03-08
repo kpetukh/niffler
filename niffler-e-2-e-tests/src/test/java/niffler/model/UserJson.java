@@ -23,6 +23,7 @@ public class UserJson {
     private String password;
 
     private transient List<CategoryJson> categoryJsons;
+    private transient List<SpendJson> spendsJsons;
 
     public UUID getId() {
         return id;
@@ -78,6 +79,14 @@ public class UserJson {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setSpendsJsons(List<SpendJson> spendsJsons) {
+        this.spendsJsons = spendsJsons;
+    }
+
+    public List<SpendJson> getSpendsJsons() {
+        return spendsJsons;
     }
 
     public List<CategoryJson> getCategoryJsons() {
