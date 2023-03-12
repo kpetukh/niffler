@@ -6,6 +6,7 @@ import niffler.data.repository.CategoryRepository;
 import niffler.data.repository.SpendRepository;
 import niffler.model.CurrencyValues;
 import niffler.model.SpendJson;
+import niffler.model.StatisticByCategoryJson;
 import niffler.model.StatisticJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -149,7 +146,6 @@ class SpendServiceTest {
         StatisticJson defaultStatisticJson = spendService.createDefaultStatisticJson(CurrencyValues.KZT, userCurrency, dateTo);
 
         Stream.of(secondSpend, firstSpend, thirdSpend)
-                .sorted(Comparator.comparing(SpendEntity::getSpendDate))
                 .peek(spendService.enrichStatisticTotalAmountByAllStreamElements(defaultStatisticJson))
                 .collect(Collectors.toList());
 
@@ -164,7 +160,6 @@ class SpendServiceTest {
         StatisticJson defaultStatisticJson = spendService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
 
         Stream.of(secondSpend, firstSpend, thirdSpend)
-                .sorted(Comparator.comparing(SpendEntity::getSpendDate))
                 .peek(spendService.enrichStatisticTotalAmountByAllStreamElements(defaultStatisticJson))
                 .peek(spendService.enrichStatisticTotalInUserCurrencyByAllStreamElements(defaultStatisticJson, statisticCurrency, userCurrency))
                 .collect(Collectors.toList());
@@ -181,7 +176,6 @@ class SpendServiceTest {
         StatisticJson defaultStatisticJson = spendService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
 
         Stream.of(secondSpend, firstSpend, thirdSpend)
-                .sorted(Comparator.comparing(SpendEntity::getSpendDate))
                 .peek(spendService.enrichStatisticTotalAmountByAllStreamElements(defaultStatisticJson))
                 .peek(spendService.enrichStatisticTotalInUserCurrencyByAllStreamElements(defaultStatisticJson, statisticCurrency, userCurrency))
                 .collect(Collectors.toList());
@@ -207,6 +201,34 @@ class SpendServiceTest {
         List<SpendJson> fishCatchSpends = map.get("Рыбалка");
         assertEquals(2, barSpends.size());
         assertEquals(1, fishCatchSpends.size());
+    }
+
+    @Test
+    void createStatisticByCategoryJsonListTest() {
+        Date dateTo = new Date();
+        CurrencyValues statisticCurrency = CurrencyValues.RUB;
+        CurrencyValues userCurrency = CurrencyValues.USD;
+        StatisticJson defaultStatisticJson = spendService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
+        Map<String, List<SpendJson>> spendsByCategory = spendService.bindSpendsToCategories(defaultStatisticJson, statisticCurrency, userCurrency, List.of(
+                secondSpend, firstSpend, thirdSpend
+        ));
+
+        List<StatisticByCategoryJson> statisticByCategories = spendService.createStatisticByCategoryJsonList(statisticCurrency, userCurrency, spendsByCategory);
+
+        Map<String, Double> expectedTotalByCategory = new HashMap<>();
+        expectedTotalByCategory.put("Рыбалка", 12000.0);
+        expectedTotalByCategory.put("Бар", 1350.0);
+
+        Map<String, Double> expectedTotalInUserCurrencyByCategory = new HashMap<>();
+        expectedTotalInUserCurrencyByCategory.put("Рыбалка", 160.0);
+        expectedTotalInUserCurrencyByCategory.put("Бар", 18.0);
+
+        assertEquals(expectedTotalByCategory.size(), statisticByCategories.size());
+        for (StatisticByCategoryJson statisticByCategory : statisticByCategories) {
+            String category = statisticByCategory.getCategory();
+            assertEquals(expectedTotalByCategory.get(category), statisticByCategory.getTotal());
+            assertEquals(expectedTotalInUserCurrencyByCategory.get(category), statisticByCategory.getTotalInUserDefaultCurrency());
+        }
     }
 
     private Date addDaysToDate(Date date, int selector, int days) {
