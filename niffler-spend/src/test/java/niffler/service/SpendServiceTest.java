@@ -212,7 +212,6 @@ class SpendServiceTest {
         Map<String, List<SpendJson>> spendsByCategory = spendService.bindSpendsToCategories(defaultStatisticJson, statisticCurrency, userCurrency, List.of(
                 secondSpend, firstSpend, thirdSpend
         ));
-
         List<StatisticByCategoryJson> statisticByCategories = spendService.createStatisticByCategoryJsonList(statisticCurrency, userCurrency, spendsByCategory);
 
         Map<String, Double> expectedTotalByCategory = new HashMap<>();
@@ -229,6 +228,30 @@ class SpendServiceTest {
             assertEquals(expectedTotalByCategory.get(category), statisticByCategory.getTotal());
             assertEquals(expectedTotalInUserCurrencyByCategory.get(category), statisticByCategory.getTotalInUserDefaultCurrency());
         }
+    }
+
+    @Test
+    void addRemainingEmptySpendCategoriesToStatisticTest() {
+        Date dateTo = new Date();
+        CurrencyValues statisticCurrency = CurrencyValues.RUB;
+        CurrencyValues userCurrency = CurrencyValues.USD;
+        StatisticJson defaultStatisticJson = spendService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
+        Map<String, List<SpendJson>> spendsByCategory = spendService.bindSpendsToCategories(defaultStatisticJson, statisticCurrency, userCurrency, List.of(
+                secondSpend, firstSpend, thirdSpend
+        ));
+        List<StatisticByCategoryJson> statisticByCategories = spendService.createStatisticByCategoryJsonList(statisticCurrency, userCurrency, spendsByCategory);
+
+        List<StatisticByCategoryJson> statisticWithEmptyCategories = new ArrayList<>();
+        spendService.addRemainingEmptySpendCategoriesToStatistic("dima", spendsByCategory, statisticWithEmptyCategories);
+        spendService.addRemainingEmptySpendCategoriesToStatistic("dima", spendsByCategory, statisticByCategories);
+
+        assertEquals(1, statisticWithEmptyCategories.size());
+        assertEquals("Магазин", statisticWithEmptyCategories.get(0).getCategory());
+        assertEquals(0, statisticWithEmptyCategories.get(0).getSpends().size());
+        assertEquals(0.0, statisticWithEmptyCategories.get(0).getTotal(), 0.0);
+        assertEquals(0.0, statisticWithEmptyCategories.get(0).getTotalInUserDefaultCurrency(), 0.0);
+
+        assertEquals(3, statisticByCategories.size());
     }
 
     private Date addDaysToDate(Date date, int selector, int days) {

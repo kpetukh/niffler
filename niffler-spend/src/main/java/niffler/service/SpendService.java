@@ -135,19 +135,7 @@ public class SpendService {
         Map<String, List<SpendJson>> spendsByCategory = bindSpendsToCategories(statistic, statisticCurrency, userCurrency, spendEntities);
 
         List<StatisticByCategoryJson> sbcjResult = createStatisticByCategoryJsonList(statisticCurrency, userCurrency, spendsByCategory);
-
-        categoryRepository.findAllByUsername(username).stream()
-                .filter(c -> !spendsByCategory.containsKey(c.getCategory()))
-                .map(c -> {
-                    StatisticByCategoryJson sbcj = new StatisticByCategoryJson();
-                    sbcj.setCategory(c.getCategory());
-                    sbcj.setSpends(Collections.emptyList());
-                    sbcj.setTotal(0.0);
-                    sbcj.setTotalInUserDefaultCurrency(0.0);
-                    return sbcj;
-                })
-                .forEach(sbcjResult::add);
-
+        addRemainingEmptySpendCategoriesToStatistic(username, spendsByCategory, sbcjResult);
         sbcjResult.sort(Comparator.comparing(StatisticByCategoryJson::getCategory));
         statistic.setCategoryStatistics(sbcjResult);
         return statistic;
@@ -231,6 +219,20 @@ public class SpendService {
             sbcjResult.add(sbcj);
         }
         return sbcjResult;
+    }
+
+    void addRemainingEmptySpendCategoriesToStatistic(String username, Map<String, List<SpendJson>> spendsByCategory, List<StatisticByCategoryJson> sbcjResult) {
+        categoryRepository.findAllByUsername(username).stream()
+                .filter(c -> !spendsByCategory.containsKey(c.getCategory()))
+                .map(c -> {
+                    StatisticByCategoryJson sbcj = new StatisticByCategoryJson();
+                    sbcj.setCategory(c.getCategory());
+                    sbcj.setSpends(Collections.emptyList());
+                    sbcj.setTotal(0.0);
+                    sbcj.setTotalInUserDefaultCurrency(0.0);
+                    return sbcj;
+                })
+                .forEach(sbcjResult::add);
     }
 
     @Nonnull
