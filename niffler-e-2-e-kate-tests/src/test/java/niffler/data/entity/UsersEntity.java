@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString(exclude = "friends")
 @Table(name = "users", schema = "public", catalog = "niffler-userdata")
 public class UsersEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)

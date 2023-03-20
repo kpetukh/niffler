@@ -38,7 +38,6 @@ public class UserFriendsTest extends BaseTest {
     @Test
     void friendsTest() {
         user1.addFriends(user2);
-        user1.addFriends(user2);
         user1.addFriends(user3);
         usersRepository.updateUser(user1);
 
