@@ -16,6 +16,10 @@ public class MainPage {
         return $(".table.spendings-table").$("tbody");
     }
 
+    public SelenideElement usernameLink() {
+        return $(".header__username");
+    }
+
     public void checkSpendPresence(SpendModel spend) {
         spendingTableBody().shouldHave(
                 text(spend.getCategory()),
