@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static niffler.model.Currency.EUR;
 import static com.codeborne.selenide.Condition.text;
 
-public class UserDataTest {
+public class UserDataTest extends BaseTest {
     @UserEntity(username = "dima", currency = EUR)
     UsersEntity dima;
     LoginPage loginPage = new LoginPage();
