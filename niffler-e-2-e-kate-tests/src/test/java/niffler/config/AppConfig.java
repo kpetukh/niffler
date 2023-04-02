@@ -13,6 +13,12 @@ public interface AppConfig extends Config {
     @Key("application.user.uri")
     String userUri();
 
+    @Key("application.currency.uri")
+    String currencyUri();
+
+    @Key("application.currency.port")
+    int currencyPort();
+
     @Key("database.user")
     String dataBaseUser();
 
