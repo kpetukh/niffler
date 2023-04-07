@@ -4,13 +4,14 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import niffler.model.SpendJson;
+import niffler.model.rest.SpendJson;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
-import static niffler.condition.SpendCondition.spends;
+import static niffler.condition.spend.SpendCondition.spends;
 
 public class SpendingTable extends BaseComponent<SpendingTable> {
 
@@ -42,10 +43,6 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
         setSpendingCategory(rowElement, editedSpending.getCategory());
 //        setSpendingDate(rowElement, editedSpending.getSpendDate());
         submitEditSpending(rowElement);
-        return this;
-    }
-
-    public SpendingTable checkTable() {
         return this;
     }
 
