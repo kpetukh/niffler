@@ -1,6 +1,7 @@
 package niffler.jupiter.annotation;
 
-import niffler.model.CurrencyValues;
+
+import niffler.model.rest.CurrencyValues;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,13 +11,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface GenerateSpend {
-    String category();
 
-    CurrencyValues currency() default CurrencyValues.RUB;
+    boolean handleAnnotation() default true;
+
+    String spendName();
+
+    String spendCategory();
+
+    int addDaysToSpendDate() default 0;
 
     double amount();
 
-    String description() default "";
-
-    String spendDate() default "";
+    CurrencyValues currency() default CurrencyValues.USD;
 }

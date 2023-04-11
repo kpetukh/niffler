@@ -3,10 +3,11 @@ package niffler.service.api;
 import jakarta.annotation.Nonnull;
 import niffler.model.FriendJson;
 import niffler.model.UserJson;
+import niffler.service.UserDataClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,7 +19,8 @@ import java.net.URI;
 import java.util.List;
 
 @Component
-public class RestUserDataClient {
+@Qualifier("rest")
+public class RestUserDataClient implements UserDataClient {
 
     private final WebClient webClient;
     private final String nifflerUserdataBaseUri;
@@ -30,6 +32,7 @@ public class RestUserDataClient {
         this.nifflerUserdataBaseUri = nifflerUserdataBaseUri;
     }
 
+    @Override
     public @Nonnull
     UserJson updateUserInfo(@Nonnull UserJson user) {
         return webClient.post()
@@ -40,6 +43,7 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
     public @Nonnull
     UserJson currentUser(@Nonnull String username) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -53,6 +57,7 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
     public @Nonnull
     List<UserJson> allUsers(@Nonnull String username) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -67,6 +72,7 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
     public @Nonnull
     List<UserJson> friends(@Nonnull String username, boolean includePending) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -82,6 +88,7 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
     public @Nonnull
     List<UserJson> invitations(@Nonnull String username) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -96,6 +103,7 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
     public @Nonnull
     List<UserJson> acceptInvitation(@Nonnull String username,
                                     @Nonnull FriendJson invitation) {
@@ -112,6 +120,17 @@ public class RestUserDataClient {
                 .block();
     }
 
+    @Override
+    public @Nonnull
+    UserJson acceptInvitationAndReturnFriend(@Nonnull String username,
+                                             @Nonnull FriendJson invitation) {
+        return acceptInvitation(username, invitation).stream()
+                .filter(friend -> friend.getUsername().equals(invitation.getUsername()))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @Override
     public @Nonnull
     List<UserJson> declineInvitation(@Nonnull String username,
                                      @Nonnull FriendJson invitation) {
@@ -128,20 +147,22 @@ public class RestUserDataClient {
                 .block();
     }
 
-    public void addFriend(@Nonnull String username,
-                          @Nonnull FriendJson friend) {
+    @Override
+    public UserJson addFriend(@Nonnull String username,
+                              @Nonnull FriendJson friend) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("username", username);
         URI uri = UriComponentsBuilder.fromHttpUrl(nifflerUserdataBaseUri + "/addFriend").queryParams(params).build().toUri();
 
-        webClient.post()
+        return webClient.post()
                 .uri(uri)
                 .body(Mono.just(friend), FriendJson.class)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .bodyToMono(UserJson.class)
                 .block();
     }
 
+    @Override
     public @Nonnull
     List<UserJson> removeFriend(@Nonnull String username,
                                 @Nonnull String friendUsername) {

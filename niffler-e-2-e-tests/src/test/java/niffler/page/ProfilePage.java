@@ -1,25 +1,30 @@
 package niffler.page;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import niffler.model.CurrencyValues;
+import niffler.model.rest.CurrencyValues;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.value;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static niffler.condition.PhotoCondition.photo;
 
 public class ProfilePage extends BasePage<ProfilePage> {
 
     public static final String URL = CFG.frontUrl() + "profile";
 
+    private final SelenideElement userName = $(".avatar-container figcaption");
     private final SelenideElement nameInput = $("input[name='firstname']");
     private final SelenideElement surnameInput = $("input[name='surname']");
     private final SelenideElement categoryInput = $("input[name='category']");
     private final SelenideElement currencySelect = $("div .select-wrapper");
     private final SelenideElement submitButton = $(byText("Submit"));
     private final SelenideElement createCategoryButton = $(byText("Create"));
+    private final ElementsCollection existingCategories = $$(".categories__list li ");
 
     @Step("Fill profile page with rate: name: {0}, surname: {1}, currency: {2}")
     public ProfilePage fillProfile(String name, String surname, CurrencyValues currency) {
@@ -45,7 +50,25 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Step("Set currency: {0}")
     public ProfilePage setCurrency(CurrencyValues currency) {
         currencySelect.click();
-        $$("div[id^='react-select']").find(text(currency.name())).click();
+        $$("div[id^='react-select']").find(exactText(currency.name())).click();
+        return this;
+    }
+
+    @Step("Set category: {0}")
+    public ProfilePage addCategory(String category) {
+        categoryInput.setValue(category);
+        createCategoryButton.click();
+        return this;
+    }
+
+    public ProfilePage checkCategoryExists(String category) {
+        existingCategories.find(text(category)).shouldBe(visible);
+        return this;
+    }
+
+    @Step("Check userName: {0}")
+    public ProfilePage checkUsername(String username) {
+        this.userName.should(text(username));
         return this;
     }
 
@@ -76,18 +99,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Step("Check that page is loaded")
     @Override
     public ProfilePage waitForPageLoaded() {
-        nameInput.should(visible);
+        userName.should(visible);
         return this;
-    }
-
-    @Step("Update avatar with img: {avatarPath}")
-    public ProfilePage updateAvatar(String avatarPath) {
-        $(".profile__avatar").click();
-        $(".edit-avatar__input[type=file]").uploadFromClasspath(avatarPath);
-        return this;
-    }
-
-    public void checkAvatar(String avatarPath) {
-        $(".profile__avatar").shouldHave(photo(avatarPath));
     }
 }
