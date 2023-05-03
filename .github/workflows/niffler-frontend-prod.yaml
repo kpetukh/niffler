@@ -1,0 +1,36 @@
+name: frontend_deploy_prod
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'niffler-frontend/**'
+      
+jobs:
+  checkout:
+    runs-on: prod-runner  
+    steps:
+      - uses: actions/checkout@v3
+
+  deploy:
+    runs-on: prod-runner
+    needs: checkout
+    steps:  
+      - name: deploy
+        working-directory: ./niffler-frontend
+        env:
+         IMAGE_NAME: ${{ vars.IMAGE_NAME_FRONTEND }}
+         NPM_COMMAND: ${{ vars.NPM_COMMAND_FRONTEND }}
+         REACT_APP_ENV: test
+         REACT_APP_FRONT_URL: http://niffler-frontend
+         REACT_APP_AUTH_URL: http://niffler-auth:9000
+         REACT_APP_GATEWAY_URL: http://niffler-gateway:8090
+        run: |
+         pwd
+         env > .env
+         docker system prune -a -f
+         docker build . -t ${IMAGE_NAME}:latest
+         docker stop niffler-fronend 
+         docker-compose up --env-file .env -d
+         echo "done"
+        
